@@ -9,5 +9,6 @@ The project aims to assist seniors to be independent when navigating technology.
 Create a separate environment for it first, using the command `python -m venv ellehack25`, you can change the name of the venv to anything you want
 - you may get an error, to resolve that run the following command and rerun the above command
 - `Set-ExecutionPolicy Unrestricted -Scope Process`
+- After rerunning the venv creation command run this command to activate the virtual env `ellehacks25\Scripts\activate`
 
 Use the command `pip install -r requirements.txt` to install all dependencies in this virtual environment
