@@ -1,0 +1,10 @@
+{
+    "name": "Nav Tech Extensions",
+    "description": "Extension helps elderly users navigate easily through Chrome browser.",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+      "default_popup": "Nav_Tech.html",
+      "default_icon": "Nav_Tech.png"
+    }
+  }
