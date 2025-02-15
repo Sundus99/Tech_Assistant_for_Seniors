@@ -3,7 +3,16 @@
     "name": "Reading time",
     "version": "1.0",
     "description": "Add the reading time to Chrome Extension documentation articles",
+    "permissions": ["activeTab"],
 
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        
+        "default_popup": "/popup/popup.html"
+    },  
+    
     "icons": {
 
     },
