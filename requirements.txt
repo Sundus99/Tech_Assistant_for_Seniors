@@ -3,7 +3,7 @@ openai
 langchain
 nltk
 scikit-learn
-speech_recognition
+SpeechRecognition
 dotenv
 markdown
 bs4
