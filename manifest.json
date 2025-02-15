@@ -1,9 +1,9 @@
 {
     "manifest_version": 3,
-    "name": "Reading time",
+    "name": "Easy Scripting Test",
     "version": "1.0",
-    "description": "Add the reading time to Chrome Extension documentation articles",
-    "permissions": ["activeTab"],
+    "description": "Add Simple Popup to chrome with a button and scripting",
+    "permissions": ["activeTab", "scripting"],
 
     "background": {
         "service_worker": "background.js"
