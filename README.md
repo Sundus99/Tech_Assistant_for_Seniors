@@ -4,4 +4,4 @@ The project aims to assist seniors to be independent when navigating technology.
 - voice command
 - Gen AI assisstant
 - mouse actions
-- chrome extention 
+- chrome extension 
