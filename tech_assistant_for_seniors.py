@@ -36,7 +36,7 @@ class UserRequest(BaseModel):
     
 def generate_response(user_request: str) -> str:
     l_u_r = user_request.lower()
-    if ("open" in l_u_r or "launch" in l_u_r) and ("how" not in l_u_r):
+    if ("open" in l_u_r or "launch" in l_u_r or "go to" in l_u_r) and ("how" not in l_u_r):
         if "youtube" in l_u_r: 
             return {"AI": "Opening Youtube, now in search bar, type what you want to watch. \nFor example, type 'funny cat videos' and press Enter key on your keyboard.",
                     "type": "open web page",
