@@ -81,6 +81,9 @@ def generate_response(user_request: str) -> str:
             return {"AI": "Opening Wikipedia",
                     "type": "open web page",
                     "url": "https://www.wikipedia.org/"}
+    elif "search" in l_u_r and ("how" not in l_u_r):
+        return {"AI": "Sorry, I can't search for you, but I can tell you how to search",
+                "type": "chat"}
     
         
     #gpt-3.5-turbo
