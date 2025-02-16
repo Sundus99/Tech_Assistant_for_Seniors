@@ -1,5 +1,5 @@
 #import openai
-from openai import OpenAI
+
 import webbrowser
 
 import os
@@ -98,13 +98,15 @@ def generate_response(user_request: str) -> str:
     soup = BeautifulSoup(html_content, "html.parser")
     reply = soup.get_text()
     print(f"AI: {reply}")
-    return {"AI": reply,
+    return {"AI": reply, 
             "type": "chat"}
+
 
 @app.post("/chat")  # POST request to /chat
 async def chat_endpoint(user_request: UserRequest):
     reply = generate_response(user_request.user_input)  
     return reply
+
 
 
     

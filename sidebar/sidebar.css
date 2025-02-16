@@ -1,0 +1,95 @@
+
+#chatbotSidebar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 300px;
+    height: 600px;
+    background-color: #d4c8f1;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    z-index: 9999;
+  }
+  
+  #header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  #title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2c2a8e;
+  }
+  
+  #infoButton {
+    position: relative;
+    cursor: pointer;
+  }
+
+  #infoButton::after {
+    content: "Extension allows you to use voice commands to do basic tasks like navigate a web browser and ask AI for assistance.";
+    position: absolute;
+    top: 125%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 6px 10px;
+    white-space: normal; 
+    max-width: 300px; 
+    border-radius: 4px;
+    font-size: 1.2em;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none; 
+    z-index: 10000;
+  }
+
+  #infoButton:hover::after {
+    opacity: 1;
+  }
+  
+  #voiceCommands {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #2c2a8e;
+  }
+  
+  #voiceControl {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  #micButton {
+    background-color: #2c2a8e;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  #micButton:hover {
+    background-color: #5751ad;
+  }
+  
+  #chatWindow {
+    margin-top: 20px;
+    flex-grow: 1;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-y: auto;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  

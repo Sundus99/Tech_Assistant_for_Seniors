@@ -1,22 +1,27 @@
 {
     "manifest_version": 3,
-    "name": "Reading time",
+    "name": "Tech Assistant for Seniors",
     "version": "1.0",
-    "description": "Add the reading time to Chrome Extension documentation articles",
-
-    "icons": {
-
+    "description": "Extension opens sidebar to help seniors use voice commands for basic browser functions and call AI Assistant.",
+    "permissions": ["activeTab", "storage", "tabs", "scripting", "audioCapture"],
+    "background": {
+      "service_worker": "scripts/background.js"
     },
-
+    "action": {},
+    "icons": {
+        "128": "images/help.png"
+    },
     "content_scripts": [
-        {
-          "js": ["scripts/content.js"],
-          "matches": [
-            "https://*/*",
-            "http://google.com/*"
-          ]
-        }
-      ]
-
-}
+      {
+        "matches": ["<all_urls>"],
+        "js": ["scripts/content.js"]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["sidebar/sidebar.html", "sidebar/sidebar.css"],
+        "matches": ["<all_urls>"]
+      }
+    ]
+  }
   
