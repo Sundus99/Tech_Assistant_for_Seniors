@@ -1,0 +1,9 @@
+streamlit
+openai
+langchain
+nltk
+scikit-learn
+SpeechRecognition
+python-dotenv
+markdown
+bs4

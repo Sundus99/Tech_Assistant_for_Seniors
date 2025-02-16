@@ -3,29 +3,23 @@
     "name": "Easy Scripting Test",
     "version": "1.0",
     "description": "Add Simple Popup to chrome with a button and scripting",
-    "permissions": ["activeTab", "scripting"],
-
+    "permissions": ["activeTab", "storage", "tabs", "scripting", "audioCapture"],
     "background": {
-        "service_worker": "background.js"
+      "service_worker": "scripts/background.js"
     },
-    "action": {
-        
-        "default_popup": "/popup/popup.html"
-    },  
-    
-    "icons": {
-
-    },
-
+    "action": {},
+    "icons": {},
     "content_scripts": [
-        {
-          "js": ["scripts/content.js"],
-          "matches": [
-            "https://*/*",
-            "http://google.com/*"
-          ]
-        }
-      ]
-
-}
+      {
+        "matches": ["<all_urls>"],
+        "js": ["scripts/content.js"]
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["sidebar/sidebar.html", "sidebar/sidebar.css"],
+        "matches": ["<all_urls>"]
+      }
+    ]
+  }
   
