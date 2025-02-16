@@ -88,7 +88,8 @@ def generate_response(user_request: str) -> str:
     soup = BeautifulSoup(html_content, "html.parser")
     reply = soup.get_text()
     print(f"AI: {reply}")
-    return reply
+    return {"AI": reply,
+            "type": "chat"}
 
 @app.post("/chat")  # POST request to /chat
 async def chat_endpoint(user_request: UserRequest):
