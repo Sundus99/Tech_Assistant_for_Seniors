@@ -10,6 +10,7 @@ import markdown
 from bs4 import BeautifulSoup
 # FastAPI is used to create the API
 from fastapi import FastAPI, Request
+from fastapi.middleware.cors import CORSMiddleware
 # Pydantic is used for data validation
 from pydantic import BaseModel 
 
@@ -22,6 +23,12 @@ server = OpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),  # This is the default and can be omitted
 )
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware, 
+    allow_origins=["*"], 
+    allow_methods=["*"], 
+    allow_headers=["*"]
+)
 
 # Validates the user input
 class UserRequest(BaseModel):
