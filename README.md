@@ -14,3 +14,5 @@ Create a separate environment for it first, using the command `python -m venv el
 Use the command `pip install -r requirements.txt` to install all dependencies in this virtual environment
 ## Backend is Deployed here, use the `/chat` endpoint for POST:
 https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com/
+## Frontend (for testing communication between the 2) is deployed here:
+https://techassistantforseniorsgit-ovsyd7tzht6v5kegxgrjbc.streamlit.app/
