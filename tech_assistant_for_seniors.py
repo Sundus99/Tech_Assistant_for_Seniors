@@ -31,38 +31,49 @@ def generate_response(user_request: str) -> str:
     l_u_r = user_request.lower()
     if ("open" in l_u_r or "launch" in l_u_r) and ("how" not in l_u_r):
         if "youtube" in l_u_r: 
-            webbrowser.open(url="https://www.youtube.com/")  # Open Youtube
-            return "Opening Youtube, now in search bar, type what you want to watch. \nFor example, type 'funny cat videos' and press Enter key on your keyboard."
+            return {"AI": "Opening Youtube, now in search bar, type what you want to watch. \nFor example, type 'funny cat videos' and press Enter key on your keyboard.",
+                    "type": "open web page",
+                    "url": "https://www.youtube.com/"}
         elif "gmail" in l_u_r:
-            webbrowser.open(url="https://www.gmail.com/")
-            return "Opening Gmail"
+            return {"AI": "Opening Gmail",
+                    "type": "open web page",
+                    "url": "https://www.gmail.com/"}
         elif "google" in l_u_r:
-            webbrowser.open(url="https://www.google.ca/")
-            return "Opening Google"
+            return {"AI": "Opening Google",
+                    "type": "open web page",
+                    "url": "https://www.google.ca/"}
         elif "facebook" in l_u_r:    
-            webbrowser.open(url="https://www.facebook.com/")
-            return "Opening Facebook"
+            return {"AI": "Opening Facebook",
+                    "type": "open web page",
+                    "url": "https://www.facebook.com/"}
         elif "hotmail" in l_u_r:
-            webbrowser.open(url="https://www.hotmail.com/")
-            return "Opening Hotmail"
+            return {"AI": "Opening Hotmail",
+                    "type": "open web page",
+                    "url": "https://www.hotmail.com/"}
         elif "yahoo" in l_u_r:  
-            webbrowser.open(url="https://www.yahoo.com/")
-            return "Opening Yahoo"
+            return {"AI": "Opening Yahoo",
+                    "type": "open web page",
+                    "url": "https://www.yahoo.com/"}
         elif "bing" in l_u_r:
-            webbrowser.open(url="https://www.bing.com/")
-            return "Opening Bing"
+            return {"AI": "Opening Bing",
+                    "type": "open web page",
+                    "url": "https://www.bing.com/"}
         elif "duckduckgo" in l_u_r or "duck duck go" in l_u_r or "duck duckgo" in l_u_r:
-            webbrowser.open(url="https://www.duckduckgo.com/")
-            return "Opening DuckDuckGo"
+            return {"AI": "Opening DuckDuckGo",
+                    "type": "open web page",
+                    "url": "https://www.duckduckgo.com/"}
         elif "amazon" in l_u_r:   
-            webbrowser.open(url="https://www.amazon.ca/")
-            return "Opening Amazon"
+            return {"AI": "Opening Amazon",
+                    "type": "open web page",
+                    "url": "https://www.amazon.ca/"}
         elif "ebay" in l_u_r:       
-            webbrowser.open(url="https://www.ebay.ca/")
-            return "Opening Ebay"
+            return {"AI": "Opening Ebay",
+                    "type": "open web page",
+                    "url": "https://www.ebay.ca/"}
         elif "wikipedia" in l_u_r:  
-            webbrowser.open(url="https://www.wikipedia.org/")
-            return "Opening Wikipedia"
+            return {"AI": "Opening Wikipedia",
+                    "type": "open web page",
+                    "url": "https://www.wikipedia.org/"}
     
         
     #gpt-3.5-turbo
@@ -82,7 +93,8 @@ def generate_response(user_request: str) -> str:
 @app.post("/chat")  # POST request to /chat
 async def chat_endpoint(user_request: UserRequest):
     reply = generate_response(user_request.user_input)  
-    return {"AI": reply}
+    return {"AI": reply,
+            "type": "chat"}
 
 
     
