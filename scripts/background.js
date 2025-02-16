@@ -7,7 +7,7 @@ chrome.action.onClicked.addListener((tab) => {
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "newTab") {
-    chrome.tabs.create({ url: "https://*/*" });
+    chrome.tabs.create({ url: "about:blank" });
   }
 });
 

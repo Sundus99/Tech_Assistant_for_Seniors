@@ -9,7 +9,6 @@
     const msgEl = document.createElement("div");
     msgEl.className = sender;
     msgEl.innerText = text;
-    console.log("msgEl:", msgEl);
     chatWindow.appendChild(msgEl);
     chatWindow.scrollTop = chatWindow.scrollHeight;
   }
@@ -32,7 +31,7 @@
       appendMessage("user", transcript);
 
       if (transcript.includes("scroll down")) {
-        window.scrollBy({ top: 50, behavior: "smooth" });
+        window.scrollBy({ top: 500, behavior: "smooth" });
       } else if (transcript.includes("scroll up")) {
         window.scrollBy({ top: -50, behavior: "smooth" });
       } else if (transcript.includes("new tab")) {
@@ -54,7 +53,7 @@
   }
 
   function sendToAI(query) {
-    appendMessage("user", query);
+    //appendMessage("user", query);
     fetch("https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -89,8 +88,7 @@
     }
   });
 
-  //document.addEventListener("click", (event) => {
-    //if (event.target && event.target.id === "infoButton") {
-      //instructions.classList.toggle("show");
-    //}
-  //});
+  document.addEventListener("click", (event) => {
+    if (event.target && event.target.id === "infoButton") {
+    }
+  });

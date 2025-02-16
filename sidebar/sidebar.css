@@ -28,10 +28,29 @@
   }
   
   #infoButton {
-    background-color: transparent;
-    border: none;
-    font-size: 20px;
+    position: relative;
     cursor: pointer;
+  }
+
+  #infoButton::after {
+    content: "For elders who are impacted by arthritis, this extension allows them to use voice commands to do basic tasks like navigate a web browser and ask AI for assistance.";
+    position: absolute;
+    bottom: 125%; 
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none; 
+    z-index: 10000;
+  }
+
+  #infoButton:hover::after {
+    opacity: 1;
   }
   
   #voiceCommands {
