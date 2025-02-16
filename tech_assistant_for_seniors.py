@@ -93,8 +93,7 @@ def generate_response(user_request: str) -> str:
 @app.post("/chat")  # POST request to /chat
 async def chat_endpoint(user_request: UserRequest):
     reply = generate_response(user_request.user_input)  
-    return {"AI": reply,
-            "type": "chat"}
+    return reply
 
 
     
