@@ -17,7 +17,7 @@
   function initVoiceRecognition() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
-      alert("Speech recognition is not supported in your browser.");
+      alert("Speech recognition not supported on current browser.");
       return;
     }
     recognition = new SpeechRecognition();
@@ -62,10 +62,16 @@
     })
       .then((res) => res.json())
       .then((data) => {
-        appendMessage("ai", data.reply);
+        console.log(data);
+        if (data.url) {
+            window.open(data.url, "_blank");
+        }
+        const ai_reply = data["AI"]; 
+        appendMessage("ai", ai_reply);
+
       })
       .catch((err) => {
-        appendMessage("ai", "Sorry, an error occurred while processing your request.");
+        appendMessage("ai", "Error: Request not processed.");
         console.error(err);
       });
   }

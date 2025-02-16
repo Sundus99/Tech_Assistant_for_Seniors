@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Easy Scripting Test",
+    "name": "Tech Assistant for Seniors",
     "version": "1.0",
-    "description": "Add Simple Popup to chrome with a button and scripting",
+    "description": "Extension opens sidebar to help seniors use voice commands for basic browser functions and call AI Assistant.",
     "permissions": ["activeTab", "storage", "tabs", "scripting", "audioCapture"],
     "background": {
       "service_worker": "scripts/background.js"

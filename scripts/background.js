@@ -5,6 +5,12 @@ chrome.action.onClicked.addListener((tab) => {
   });
 });
 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === "newTab") {
+    chrome.tabs.create({ url: "https://*/*" });
+  }
+});
+
 function injectSidebar() {
   const htmlURL = chrome.runtime.getURL('sidebar/sidebar.html');
   const cssURL = chrome.runtime.getURL('sidebar/sidebar.css');
