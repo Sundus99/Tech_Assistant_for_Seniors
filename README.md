@@ -14,3 +14,9 @@ Create a separate environment for it first, using the command `python -m venv el
 Use the command `pip install -r requirements.txt` to install all dependencies in this virtual environment
 ## Backend is Deployed here, use the `/chat` endpoint for POST:
 https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com/
+## Tools & References Used:
+- VS Code
+- Github Copilot for VS Code debugging & gpt-o1 model
+- Speech Recognition API Reference & Boilerplate
+- Chrome Extension Docs
+- ChatGPT API
