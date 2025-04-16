@@ -1,3 +1,5 @@
+# ElleHacks 2025 Submission 
+https://dorahacks.io/buidl/22872
 # Tech_Assistant_for_Seniors
 The project aims to assist seniors to be independent when navigating technology. 
 ## Features
