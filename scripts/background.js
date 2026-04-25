@@ -1,4 +1,15 @@
+/*
+ * Background service worker Manifest V3 
+ *
+ */
+
+// imports 
+// need chrome and device driver to run selenium 
+// forgot to add sender and the response header here 
 chrome.action.onClicked.addListener((tab) => {
+  switch (request.action) {
+    chrome.tabs.create({ url: "chrome://newtab"})
+  }
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     func: injectSidebar,
