@@ -5,16 +5,25 @@
 
 // imports 
 // need chrome and device driver to run selenium 
-// forgot to add sender and the response header here 
+
 chrome.action.onClicked.addListener((tab) => {
-  switch (request.action) {
-    chrome.tabs.create({ url: "chrome://newtab"})
-  }
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
     func: injectSidebar,
   });
 });
+
+// forgot to add sender and the response header here 
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    switch (request.action) {
+    case "newTab":
+      chrome.tabs.create({ url: "chrome://newtab"})
+      break
+    case "closeTab":
+      if 
+
+  }
+})
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "newTab") {
