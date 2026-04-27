@@ -20,8 +20,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.tabs.create({ url: "chrome://newtab"})
       break
     case "closeTab":
-      if 
-
+      if (sender.tab?.id) chrome.tabs.remove(sender.tab.id);
+      break
+    case "nextTab":
+      chrome.tabs.query({ currentWindow: true }, (tabs) => {
+        const idx = tabs.findIndex((t) => t.active)
+        const next = tabs[(idx + 1) % tabs.length]
+        if (next) chrome.tabs.update(next.id, { active: true })
+      })
+      break
   }
 })
 
