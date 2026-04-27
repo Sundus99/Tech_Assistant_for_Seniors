@@ -38,14 +38,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function injectSidebar() {
+async function injectSidebar() {
+  const existing = document.getElementById("chatbotSidebar")
+  if (existing) {
+    existing.style.display = existing.style.display === "none" ? "" : "none"
+    return
+  }
   const htmlURL = chrome.runtime.getURL('sidebar/sidebar.html');
   const cssURL = chrome.runtime.getURL('sidebar/sidebar.css');
 
-  Promise.all([
-    fetch(htmlURL).then((res) => res.text()),
-    fetch(cssURL).then((res) => res.text()),
-  ])
+  try { 
+    const [html, css] = await Promise.all([
+      fetch(htmlURL).then((res) => res.text()),
+      fetch(cssURL).then((res) => res.text()),
+    ])
+
+    // injection of google fonts 
     .then(([html, css]) => {
       const sidebarElement = document.createElement('div');
       sidebarElement.innerHTML = html;
