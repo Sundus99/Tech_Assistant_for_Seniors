@@ -54,6 +54,7 @@
 
   function sendToAI(query) {
     //appendMessage("user", query);
+    // free tier shitty need new deployment pipeline 
     fetch("https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
