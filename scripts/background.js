@@ -5,7 +5,6 @@
 
 // imports 
 // need chrome and device driver to run selenium 
-
 chrome.action.onClicked.addListener((tab) => {
   chrome.scripting.executeScript({
     target: { tabId: tab.id },
