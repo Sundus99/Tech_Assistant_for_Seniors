@@ -46,4 +46,11 @@ def _contains_any(text: str, needles: frozenset[str] | tuple[str, ...]) -> bool:
 
 
 def classify(user_input: str) -> RoutedIntent:
-    ...
+    if not user_input or not user_input.strip():
+        return RoutedIntent(
+            intent=IntentType.CHAT,
+            reply="I didn't catch that — could you say it again?",
+            handled_locally=True,
+        )
+
+    text = user_input.lower().strip()
