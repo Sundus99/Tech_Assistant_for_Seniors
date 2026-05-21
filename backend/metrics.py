@@ -46,4 +46,16 @@ class MetricsStore:
                     estimated_cost_usd REAL  NOT NULL DEFAULT 0.0,
                     error            TEXT
                 )
-                """)
+                """
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_ts ON requests(ts)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_intent ON requests(intent)")
+
+    @contextmanager
+    def _connect(self) -> Iterator[sqlite3.Connection]:
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        try:
+            yield conn
+            conn.commit()
+        finally:
+            conn.close()
