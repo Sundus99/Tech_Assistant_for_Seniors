@@ -8,6 +8,11 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterator, Optional
 
+# OpenAI gpt-4o-mini pricing (USD per 1M tokens) as of 2025.
+# Source: https://openai.com/api/pricing/
+INPUT_PRICE_PER_MTOK = 0.15
+OUTPUT_PRICE_PER_MTOK = 0.60
+
 @dataclass
 class RequestRecord:
     """One row in the request log."""
@@ -47,6 +52,7 @@ class MetricsStore:
                     error            TEXT
                 )
                 """
+            )
             conn.execute("CREATE INDEX IF NOT EXISTS idx_ts ON requests(ts)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_intent ON requests(intent)")
 
@@ -59,3 +65,17 @@ class MetricsStore:
             conn.commit()
         finally:
             conn.close()
+
+
+def estimate_cost_usd(prompt_tokens: int, completion_tokens: int) -> float:
+    """Compute USD cost for a gpt-4o-mini call."""
+    return (
+        (prompt_tokens / 1_000_000) * INPUT_PRICE_PER_MTOK
+        + (completion_tokens / 1_000_000) * OUTPUT_PRICE_PER_MTOK
+    )
+
+def _percentile(values: list[float], pct: int) -> float:
+    if not values:
+        return 0.0
+    k = int(round((pct / 100.0) * (len(values) - 1)))
+    return round(values[k], 2)
