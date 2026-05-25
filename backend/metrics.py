@@ -59,3 +59,11 @@ class MetricsStore:
             conn.commit()
         finally:
             conn.close()
+
+
+def estimate_cost_usd(prompt_tokens: int, completion_tokens: int) -> float:
+    """Compute USD cost for a gpt-4o-mini call."""
+    return (
+        (prompt_tokens / 1_000_000) * INPUT_PRICE_PER_MTOK
+        + (completion_tokens / 1_000_000) * OUTPUT_PRICE_PER_MTOK
+    )
