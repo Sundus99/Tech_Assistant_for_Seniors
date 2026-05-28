@@ -34,6 +34,51 @@ class TestChatEndpoint:
         assert body["type"] == "chat"
         assert "Inflation means prices are going up" in body["AI"]
 
+    def test_gemini_provider_returns_live_model_text(self, client, monkeypatch) -> None:
+        from backend import tech_assistant_for_seniors as app_module
+
+        class FakeGeminiResponse:
+            def raise_for_status(self) -> None:
+                return None
+
+            def json(self) -> dict:
+                return {
+                    "candidates": [{
+                        "content": {
+                            "parts": [{"text": "Open Gmail, click Compose, then click Send."}]
+                        }
+                    }],
+                    "usageMetadata": {
+                        "promptTokenCount": 12,
+                        "candidatesTokenCount": 9,
+                    },
+                }
+
+        class FakeHttpClient:
+            def __init__(self, timeout: int):
+                self.timeout = timeout
+
+            def __enter__(self):
+                return self
+
+            def __exit__(self, exc_type, exc, tb) -> None:
+                return None
+
+            def post(self, url: str, headers: dict, json: dict):
+                assert "generateContent" in url
+                assert headers["x-goog-api-key"] == "gemini-test-key"
+                return FakeGeminiResponse()
+
+        monkeypatch.setattr(app_module, "LLM_PROVIDER", "gemini")
+        monkeypatch.setattr(app_module, "GEMINI_API_KEY", "gemini-test-key")
+        monkeypatch.setattr(app_module.httpx, "Client", FakeHttpClient)
+
+        resp = client.post("/chat", json={"user_input": "what is two factor authentication"})
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["type"] == "chat"
+        assert "Open Gmail" in body["AI"]
+
     def test_search_refusal(self, client) -> None:
         resp = client.post("/chat", json={"user_input": "search for recipes"})
         assert resp.status_code == 200

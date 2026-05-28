@@ -129,6 +129,11 @@ LLM_PROVIDER=mock
 For live model responses, switch providers in `.env`:
 
 ```env
+# Hosted Gemini Developer API option with a free tier
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=...
+GEMINI_MODEL=gemini-3.5-flash
+
 # Paid OpenAI API
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-...

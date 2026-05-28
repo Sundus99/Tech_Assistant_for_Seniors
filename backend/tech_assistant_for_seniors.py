@@ -23,6 +23,7 @@ import time
 from typing import Any
 
 import markdown
+import httpx
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
@@ -47,6 +48,8 @@ LLM_PROVIDER = os.getenv("LLM_PROVIDER", "mock").strip().lower()
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
 OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.5-flash")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 METRICS_DB = os.getenv("METRICS_DB", "grandassist_metrics.db")
 
 # ---- Globals ----
@@ -97,6 +100,8 @@ def _llm_reply(user_input: str) -> tuple[str, int, int]:
         return _chat_completion_reply(ollama_client, OLLAMA_MODEL, user_input)
     if LLM_PROVIDER == "openai":
         return _chat_completion_reply(openai_client, OPENAI_MODEL, user_input)
+    if LLM_PROVIDER == "gemini":
+        return _gemini_reply(user_input)
     raise ValueError(f"Unsupported LLM_PROVIDER: {LLM_PROVIDER}")
 
 
@@ -160,6 +165,65 @@ def _chat_completion_reply(client: OpenAI, model: str,
     reply = BeautifulSoup(markdown.markdown(raw), "html.parser").get_text()
     usage = response.usage
     return reply, usage.prompt_tokens or 0, usage.completion_tokens or 0
+
+
+def _gemini_reply(user_input: str) -> tuple[str, int, int]:
+    """Call Gemini Developer API via REST. Returns text and token counts."""
+    if not GEMINI_API_KEY:
+        raise ValueError("GEMINI_API_KEY is required when LLM_PROVIDER=gemini")
+
+    url = (
+        "https://generativelanguage.googleapis.com/v1beta/models/"
+        f"{GEMINI_MODEL}:generateContent"
+    )
+    payload = {
+        "system_instruction": {
+            "parts": [{
+                "text": (
+                    "You are GrandAssist, a patient tech helper for seniors. "
+                    "Answer in plain language with short, step-by-step guidance. "
+                    "Avoid jargon. Mention safety checks for passwords, money, "
+                    "or personal information."
+                )
+            }]
+        },
+        "contents": [{
+            "parts": [{"text": user_input}]
+        }],
+        "generationConfig": {
+            "temperature": 0.3,
+            "maxOutputTokens": 350,
+        },
+    }
+
+    with httpx.Client(timeout=20) as client:
+        response = client.post(
+            url,
+            headers={
+                "Content-Type": "application/json",
+                "x-goog-api-key": GEMINI_API_KEY,
+            },
+            json=payload,
+        )
+        response.raise_for_status()
+        data = response.json()
+
+    parts = (
+        data.get("candidates", [{}])[0]
+        .get("content", {})
+        .get("parts", [])
+    )
+    raw = "\n".join(part.get("text", "") for part in parts).strip()
+    if not raw:
+        raise ValueError("Gemini returned an empty response")
+
+    reply = BeautifulSoup(markdown.markdown(raw), "html.parser").get_text()
+    usage = data.get("usageMetadata", {})
+    return (
+        reply,
+        usage.get("promptTokenCount", 0),
+        usage.get("candidatesTokenCount", 0),
+    )
 
 
 # ---- Routes ----
