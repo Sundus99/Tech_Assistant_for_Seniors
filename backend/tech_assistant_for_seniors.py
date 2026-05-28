@@ -109,6 +109,13 @@ def _mock_reply(user_input: str) -> str:
             "on Windows. A print window will open. Choose your printer, then "
             "click Print."
         )
+    if "email" in topic or "gmail" in topic:
+        return (
+            "To send an email in Gmail, open Gmail and click Compose. Type the "
+            "person's email address in the To box, add a short subject, then "
+            "write your message in the large blank area. When you are ready, "
+            "click Send."
+        )
     if "inflation" in topic:
         return (
             "Inflation means prices are going up over time. For example, if "
@@ -120,10 +127,24 @@ def _mock_reply(user_input: str) -> str:
             "Settings, then look for Password or Security. Choose a strong new "
             "password and save it somewhere safe."
         )
+    if topic.startswith("how do i ") or topic.startswith("how to "):
+        task = (
+            topic.removeprefix("how do i ")
+            .removeprefix("how to ")
+            .strip()
+        )
+        return (
+            f"To {task}, start by opening the website or app where you want to "
+            "do it. Look for a clearly labeled button or menu, follow the "
+            "prompts one step at a time, and review everything before you "
+            "confirm or submit."
+        )
     topic = user_input.strip().rstrip(".?!") or "that"
     return (
-        f"I can help with {topic}. Please tell me a little more about what "
-        "you want to do, and I will walk you through it step by step."
+        f"Here is a simple way to think about {topic}: start with the main "
+        "website or app, look for the relevant button or menu, and take it one "
+        "step at a time. If something asks for money, a password, or personal "
+        "information, pause and double-check before continuing."
     )
 
 
