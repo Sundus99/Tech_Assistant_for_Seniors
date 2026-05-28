@@ -16,6 +16,21 @@
   "use strict";
 
   const BACKEND = "https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com";
+  const KNOWN_SITES = [
+    { aliases: ["youtube", "you tube"], name: "YouTube", url: "https://www.youtube.com/" },
+    { aliases: ["gmail"], name: "Gmail", url: "https://www.gmail.com/" },
+    { aliases: ["google"], name: "Google", url: "https://www.google.ca/" },
+    { aliases: ["facebook"], name: "Facebook", url: "https://www.facebook.com/" },
+    { aliases: ["hotmail", "outlook"], name: "Hotmail", url: "https://outlook.live.com/" },
+    { aliases: ["yahoo"], name: "Yahoo", url: "https://www.yahoo.com/" },
+    { aliases: ["bing"], name: "Bing", url: "https://www.bing.com/" },
+    { aliases: ["duckduckgo", "duck duck go", "duck duckgo"], name: "DuckDuckGo", url: "https://duckduckgo.com/" },
+    { aliases: ["amazon"], name: "Amazon", url: "https://www.amazon.ca/" },
+    { aliases: ["ebay"], name: "eBay", url: "https://www.ebay.ca/" },
+    { aliases: ["wikipedia"], name: "Wikipedia", url: "https://www.wikipedia.org/" },
+    { aliases: ["pinterest"], name: "Pinterest", url: "https://www.pinterest.com/" },
+  ];
+  const OPEN_VERBS = ["open", "launch", "go to", "take me to"];
 
   // --- state --------------------------------------------------------------
   const state = {
@@ -225,6 +240,15 @@
   function handleTranscript(transcript) {
     const lower = transcript.toLowerCase();
     renderMessage("user", transcript);
+    const localWebsite = matchLocalWebsite(lower);
+    if (localWebsite) {
+      window.open(localWebsite.url, "_blank", "noopener");
+      let reply = `Opening ${localWebsite.name}.`;
+      if (localWebsite.name === "YouTube") {
+        reply += " Now, in the search bar, type what you want to watch and press Enter.";
+      }
+      return renderMessage("ai", reply);
+    }
 
     // Local DOM actions — never touch the backend
     if (lower.includes("scroll down")) {
@@ -260,6 +284,12 @@
 
     // Everything else goes to the backend
     sendToBackend(transcript);
+  }
+
+  function matchLocalWebsite(text) {
+    const isHowTo = text.includes("how") && (text.includes("do i") || text.includes("to "));
+    if (isHowTo || !OPEN_VERBS.some(verb => text.includes(verb))) return null;
+    return KNOWN_SITES.find(site => site.aliases.some(alias => text.includes(alias))) || null;
   }
 
   // --- backend I/O --------------------------------------------------------
