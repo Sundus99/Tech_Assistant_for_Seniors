@@ -43,6 +43,7 @@ def mock_openai_response():
 def client(monkeypatch, temp_db_path, mock_openai_response):
     """FastAPI TestClient with OpenAI and Pinterest mocked out."""
     monkeypatch.setenv("METRICS_DB", str(temp_db_path))
+    monkeypatch.setenv("LLM_PROVIDER", "openai")
     monkeypatch.setenv("OPENAI_API_KEY", "sk-test")
 
     # Import *after* env is set so config picks it up.
@@ -51,6 +52,7 @@ def client(monkeypatch, temp_db_path, mock_openai_response):
     # Swap in a fresh MetricsStore pointed at temp DB
     from backend.metrics import MetricsStore
     app_module.metrics = MetricsStore(temp_db_path)
+    app_module.LLM_PROVIDER = "openai"
 
     # Mock OpenAI
     mock_openai = MagicMock()

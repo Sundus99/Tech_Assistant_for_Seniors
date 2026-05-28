@@ -4,7 +4,8 @@ GrandAssist backend.
 FastAPI app that:
   1. Routes voice commands through a local intent classifier first
      (cheap, deterministic, sub-millisecond).
-  2. Falls back to gpt-4o-mini only when the local router can't handle it.
+  2. Falls back to a configurable LLM provider only when the local router
+     can't handle it.
   3. Optionally proxies Pinterest pin search for users who have linked their
      account.
   4. Records every request to a local SQLite metrics DB so we can prove out
@@ -26,7 +27,7 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, RedirectResponse
+from fastapi.responses import JSONResponse
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
@@ -42,11 +43,15 @@ from backend.pinterest_client import PinterestClient
 load_dotenv()
 
 # ---- Config ----
+LLM_PROVIDER = os.getenv("LLM_PROVIDER", "mock").strip().lower()
 OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.2")
+OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434/v1")
 METRICS_DB = os.getenv("METRICS_DB", "grandassist_metrics.db")
 
 # ---- Globals ----
 openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY", ""))
+ollama_client = OpenAI(api_key="ollama", base_url=OLLAMA_BASE_URL)
 metrics = MetricsStore(METRICS_DB)
 pinterest = PinterestClient()
 
@@ -85,16 +90,38 @@ class ChatResponse(BaseModel):
 
 # ---- Helpers ----
 def _llm_reply(user_input: str) -> tuple[str, int, int]:
-    """Call gpt-4o-mini. Returns (text, prompt_tokens, completion_tokens)."""
-    response = openai_client.chat.completions.create(
-        model=OPENAI_MODEL,
+    """Call the configured LLM provider. Returns text and token counts."""
+    if LLM_PROVIDER == "mock":
+        return _mock_reply(user_input), 0, 0
+    if LLM_PROVIDER == "ollama":
+        return _chat_completion_reply(ollama_client, OLLAMA_MODEL, user_input)
+    if LLM_PROVIDER == "openai":
+        return _chat_completion_reply(openai_client, OPENAI_MODEL, user_input)
+    raise ValueError(f"Unsupported LLM_PROVIDER: {LLM_PROVIDER}")
+
+
+def _mock_reply(user_input: str) -> str:
+    """Free deterministic fallback for demos, tests, and fresh clones."""
+    topic = user_input.strip().rstrip(".?!") or "that"
+    return (
+        f"I can help with '{topic}'. This demo is running with the mock LLM "
+        "provider, so no paid API key is required. Set LLM_PROVIDER=openai or "
+        "LLM_PROVIDER=ollama for live model responses."
+    )
+
+
+def _chat_completion_reply(client: OpenAI, model: str,
+                           user_input: str) -> tuple[str, int, int]:
+    """Call an OpenAI-compatible chat completions endpoint."""
+    response = client.chat.completions.create(
+        model=model,
         messages=[{"role": "user", "content": user_input}],
     )
     raw = response.choices[0].message.content or ""
     # Strip markdown so the sidebar can render plain text.
     reply = BeautifulSoup(markdown.markdown(raw), "html.parser").get_text()
     usage = response.usage
-    return reply, usage.prompt_tokens, usage.completion_tokens
+    return reply, usage.prompt_tokens or 0, usage.completion_tokens or 0
 
 
 # ---- Routes ----

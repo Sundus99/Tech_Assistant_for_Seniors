@@ -24,6 +24,16 @@ class TestChatEndpoint:
         assert body["type"] == "chat"
         assert body["AI"] == "This is a helpful AI answer."
 
+    def test_mock_llm_provider_runs_without_api_key(self, client, monkeypatch) -> None:
+        from backend import tech_assistant_for_seniors as app_module
+
+        monkeypatch.setattr(app_module, "LLM_PROVIDER", "mock")
+        resp = client.post("/chat", json={"user_input": "what is inflation"})
+        assert resp.status_code == 200
+        body = resp.json()
+        assert body["type"] == "chat"
+        assert "mock LLM provider" in body["AI"]
+
     def test_search_refusal(self, client) -> None:
         resp = client.post("/chat", json={"user_input": "search for recipes"})
         assert resp.status_code == 200

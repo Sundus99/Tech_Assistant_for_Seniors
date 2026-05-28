@@ -112,10 +112,32 @@ python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 
 pip install -r requirements-dev.txt
-cp .env.example .env             # then edit in your OPENAI_API_KEY
+cp .env.example .env             # defaults to free mock LLM responses
 
 uvicorn backend.tech_assistant_for_seniors:app --reload
 # → http://localhost:8000/docs
+```
+
+### LLM provider
+
+The backend runs for free by default:
+
+```env
+LLM_PROVIDER=mock
+```
+
+For live model responses, switch providers in `.env`:
+
+```env
+# Paid OpenAI API
+LLM_PROVIDER=openai
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
+
+# Free local Ollama option
+LLM_PROVIDER=ollama
+OLLAMA_BASE_URL=http://localhost:11434/v1
+OLLAMA_MODEL=llama3.2
 ```
 
 ### Extension
@@ -185,6 +207,7 @@ Scopes required: `pins:read`, `boards:read`, `user_accounts:read`. Users authori
 ## What changed in v1.1
 
 - **Fixed broken OpenAI import** that crashed the backend
+- **Added configurable LLM providers** — free mock default, optional OpenAI or Ollama
 - **Extracted intent routing** into a pure module with unit tests (was a 60-line `if/elif` chain)
 - **Added SQLite request metrics** — `/metrics` endpoint with cost tracking
 - **Added Pinterest API v5** integration (OAuth + pin search)
