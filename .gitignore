@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+ellehacks25/
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Metrics DB (local)
+*.db
+grandassist_metrics.db
+
+# Benchmark artifacts (except the canonical queries file)
+benchmarks/results.json
+benchmarks/latest.json
+
+# Secrets
+.env
+.env.local
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
