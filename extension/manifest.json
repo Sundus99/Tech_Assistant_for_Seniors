@@ -5,6 +5,8 @@
   "description": "Voice-controlled browser assistant for seniors. Open websites, search your Pinterest pins, and ask an AI for help — all hands-free.",
   "permissions": ["activeTab", "storage", "tabs", "scripting"],
   "host_permissions": [
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*",
     "https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com/*",
     "https://api.pinterest.com/*"
   ],

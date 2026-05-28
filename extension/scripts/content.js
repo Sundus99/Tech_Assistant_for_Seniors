@@ -15,7 +15,11 @@
 (function () {
   "use strict";
 
-  const BACKEND = "https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com";
+  const BACKENDS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://tech-assistant-for-seniors-eb4876783faf.herokuapp.com",
+  ];
   const KNOWN_SITES = [
     { aliases: ["youtube", "you tube"], name: "YouTube", url: "https://www.youtube.com/" },
     { aliases: ["gmail"], name: "Gmail", url: "https://www.gmail.com/" },
@@ -296,23 +300,35 @@
   async function sendToBackend(query) {
     setState("thinking", "Thinking…");
     try {
-      const res = await fetch(`${BACKEND}/chat`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_input: query,
-          session_id: state.sessionId,
-        }),
-      });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = await res.json();
+      const data = await postChat(query);
       handleBackendResponse(data);
     } catch (err) {
       console.error("[GrandAssist] backend error:", err);
-      renderError("Can't reach our server right now. Please try again in a moment.");
+      renderError("Can't reach our server right now. Please make sure the backend is running, then try again.");
     } finally {
       setState("idle", "Ready to listen");
     }
+  }
+
+  async function postChat(query) {
+    let lastError = null;
+    for (const backend of BACKENDS) {
+      try {
+        const res = await fetch(`${backend}/chat`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            user_input: query,
+            session_id: state.sessionId,
+          }),
+        });
+        if (!res.ok) throw new Error(`${backend} returned HTTP ${res.status}`);
+        return await res.json();
+      } catch (err) {
+        lastError = err;
+      }
+    }
+    throw lastError || new Error("No backend configured");
   }
 
   function handleBackendResponse(data) {

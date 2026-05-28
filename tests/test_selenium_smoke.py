@@ -129,6 +129,7 @@ class TestSidebarInjection:
         for elem_id in ("gaHeader", "micButton", "gaMinBtn",
                          "gaCloseBtn", "gaChat"):
             assert driver.find_element(By.ID, elem_id), f"missing #{elem_id}"
+        assert not driver.find_element(By.ID, "gaMinPill").is_displayed()
 
     def test_mic_button_has_accessible_label(self, driver, local_page):
         _open_sidebar(driver, local_page)

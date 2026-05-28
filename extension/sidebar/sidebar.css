@@ -70,6 +70,10 @@
   text-transform: none;
 }
 
+#chatbotSidebar [hidden] {
+  display: none !important;
+}
+
 /* Subtle gradient rail on the left — visual anchor */
 #chatbotSidebar::before {
   content: "";
@@ -96,6 +100,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
 }
 .ga-logo {
   width: 32px; height: 32px;
@@ -108,18 +113,22 @@
   font-family: "Newsreader", Georgia, "Times New Roman", serif;
   font-size: var(--ga-text-xl);
   font-weight: 600;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   color: var(--ga-ink);
   margin: 0;
+  white-space: nowrap;
 }
 
 .ga-header-actions {
   display: flex;
+  align-items: center;
+  flex: 0 0 auto;
   gap: 2px;
 }
 
 .ga-icon-btn {
-  width: 36px; height: 36px;
+  width: 34px; height: 34px;
+  flex: 0 0 34px;
   display: grid; place-items: center;
   background: transparent;
   border: none;
@@ -431,7 +440,8 @@
   color: #fff;
   cursor: pointer;
   box-shadow: var(--ga-shadow);
-  display: grid; place-items: center;
+  display: none;
+  place-items: center;
   transition: transform 0.15s, background 0.2s;
 }
 .ga-min-pill:hover      { transform: scale(1.08); background: var(--ga-primary-dark); }
