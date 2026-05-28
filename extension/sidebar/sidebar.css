@@ -88,8 +88,8 @@
 .ga-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px 16px 10px 20px;
+  gap: 12px;
+  padding: 14px 14px 10px 20px;
   cursor: grab;
   user-select: none;
   border-bottom: 1px solid var(--ga-border);
@@ -100,10 +100,12 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1 1 auto;
   min-width: 0;
 }
 .ga-logo {
   width: 32px; height: 32px;
+  flex: 0 0 32px;
   display: grid; place-items: center;
   color: #fff;
   background: var(--ga-primary);
@@ -111,11 +113,14 @@
 }
 .ga-title {
   font-family: "Newsreader", Georgia, "Times New Roman", serif;
-  font-size: var(--ga-text-xl);
+  font-size: calc(20px * var(--ga-scale));
   font-weight: 600;
   letter-spacing: 0;
   color: var(--ga-ink);
   margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
@@ -123,7 +128,7 @@
   display: flex;
   align-items: center;
   flex: 0 0 auto;
-  gap: 2px;
+  gap: 6px;
 }
 
 .ga-icon-btn {
