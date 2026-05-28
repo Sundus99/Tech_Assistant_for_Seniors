@@ -102,11 +102,28 @@ def _llm_reply(user_input: str) -> tuple[str, int, int]:
 
 def _mock_reply(user_input: str) -> str:
     """Free deterministic fallback for demos, tests, and fresh clones."""
+    topic = user_input.strip().lower().rstrip(".?!")
+    if "print" in topic:
+        return (
+            "To print this page, press Command and P on a Mac, or Control and P "
+            "on Windows. A print window will open. Choose your printer, then "
+            "click Print."
+        )
+    if "inflation" in topic:
+        return (
+            "Inflation means prices are going up over time. For example, if "
+            "groceries cost more this year than last year, that is inflation."
+        )
+    if "password" in topic:
+        return (
+            "To change a password, open the website or app, go to Account or "
+            "Settings, then look for Password or Security. Choose a strong new "
+            "password and save it somewhere safe."
+        )
     topic = user_input.strip().rstrip(".?!") or "that"
     return (
-        f"I can help with '{topic}'. This demo is running with the mock LLM "
-        "provider, so no paid API key is required. Set LLM_PROVIDER=openai or "
-        "LLM_PROVIDER=ollama for live model responses."
+        f"I can help with {topic}. Please tell me a little more about what "
+        "you want to do, and I will walk you through it step by step."
     )
 
 

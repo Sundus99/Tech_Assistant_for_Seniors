@@ -32,7 +32,7 @@ class TestChatEndpoint:
         assert resp.status_code == 200
         body = resp.json()
         assert body["type"] == "chat"
-        assert "mock LLM provider" in body["AI"]
+        assert "Inflation means prices are going up" in body["AI"]
 
     def test_search_refusal(self, client) -> None:
         resp = client.post("/chat", json={"user_input": "search for recipes"})
