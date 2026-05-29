@@ -1,0 +1,88 @@
+<div id="chatbotSidebar" class="ga-sidebar" role="complementary" aria-label="GrandAssist voice assistant">
+
+  <!-- Header: drag handle, minimize, close -->
+  <header class="ga-header" id="gaHeader">
+    <div class="ga-brand">
+      <span class="ga-logo" aria-hidden="true">
+        <!-- stylized mic inside speech bubble -->
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+          <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zm5 9a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
+        </svg>
+      </span>
+      <h1 class="ga-title">GrandAssist</h1>
+    </div>
+    <div class="ga-header-actions">
+      <button class="ga-icon-btn" id="gaFontBtn" aria-label="Change text size" title="Text size">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>
+      </button>
+      <button class="ga-icon-btn" id="gaInfoBtn" aria-label="About GrandAssist" aria-haspopup="dialog">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><circle cx="12" cy="8" r="0.5" fill="currentColor"/></svg>
+      </button>
+      <button class="ga-icon-btn" id="gaMinBtn" aria-label="Minimize sidebar" title="Minimize">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14"/></svg>
+      </button>
+      <button class="ga-icon-btn" id="gaCloseBtn" aria-label="Close sidebar" title="Close">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Status pill -->
+  <div class="ga-status" id="gaStatus" role="status" aria-live="polite">
+    <span class="ga-status-dot" aria-hidden="true"></span>
+    <span class="ga-status-text">Ready to listen</span>
+  </div>
+
+  <!-- Main transcript / pins display -->
+  <main class="ga-main" id="gaChat" role="log" aria-live="polite" aria-label="Conversation">
+    <div class="ga-welcome" id="gaWelcome">
+      <p class="ga-welcome-lead">Hello! Tap the microphone to speak, or try saying:</p>
+      <ul class="ga-examples">
+        <li><kbd>"Open YouTube"</kbd> — opens a website</li>
+        <li><kbd>"Show me my recipe pins"</kbd> — searches your Pinterest</li>
+        <li><kbd>"Scroll down"</kbd> — scrolls the page</li>
+        <li><kbd>"How do I print?"</kbd> — asks our AI helper</li>
+      </ul>
+    </div>
+  </main>
+
+  <!-- Mic control -->
+  <footer class="ga-controls">
+    <button class="ga-mic" id="micButton" aria-label="Start listening" aria-pressed="false">
+      <span class="ga-mic-ripple" aria-hidden="true"></span>
+      <span class="ga-mic-ripple ga-mic-ripple--2" aria-hidden="true"></span>
+      <svg class="ga-mic-icon" viewBox="0 0 24 24" width="28" height="28" fill="currentColor" aria-hidden="true">
+        <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zm5 9a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
+      </svg>
+    </button>
+    <p class="ga-mic-hint" id="gaMicHint">Tap to speak</p>
+  </footer>
+
+  <!-- Settings drawer (hidden by default) -->
+  <aside class="ga-drawer" id="gaFontDrawer" hidden aria-label="Text size">
+    <p class="ga-drawer-title">Text size</p>
+    <div class="ga-font-picker" role="radiogroup" aria-label="Select text size">
+      <button class="ga-font-opt" data-scale="1"    role="radio" aria-checked="false">A</button>
+      <button class="ga-font-opt" data-scale="1.2"  role="radio" aria-checked="true">A</button>
+      <button class="ga-font-opt" data-scale="1.4"  role="radio" aria-checked="false">A</button>
+      <button class="ga-font-opt" data-scale="1.65" role="radio" aria-checked="false">A</button>
+    </div>
+  </aside>
+
+  <!-- Info dialog -->
+  <aside class="ga-drawer" id="gaInfoDrawer" hidden aria-label="About GrandAssist">
+    <p class="ga-drawer-title">About GrandAssist</p>
+    <p class="ga-drawer-body">
+      A voice assistant for browsing made simple. Tap the microphone to speak,
+      tap it again when you're done. Ask questions, open websites, scroll,
+      and search your saved Pinterest pins hands-free.
+    </p>
+  </aside>
+
+  <!-- Minimized pill (shown when minimized) -->
+  <button class="ga-min-pill" id="gaMinPill" hidden aria-label="Open GrandAssist">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor" aria-hidden="true">
+      <path d="M12 2a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3zm5 9a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/>
+    </svg>
+  </button>
+</div>

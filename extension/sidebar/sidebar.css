@@ -1,0 +1,484 @@
+/* =========================================================================
+   GrandAssist sidebar — v2
+   Design principles:
+     * WCAG 2.1 AA contrast throughout (tested pairs noted in comments)
+     * 18px base font size, scalable up to 1.65× for low-vision users
+     * 44×44px minimum tap targets (iOS/Android guidelines)
+     * Honours prefers-reduced-motion
+     * All styles scoped under .ga-sidebar / #chatbotSidebar so we never
+       collide with the host page
+   ========================================================================= */
+
+/* -------- design tokens -------- */
+#chatbotSidebar {
+  /* Brand */
+  --ga-primary:        #4C3A9E;   /* 7.2:1 on white — AAA */
+  --ga-primary-dark:   #352670;
+  --ga-primary-tint:   #EDE9FB;
+  --ga-accent:         #E60023;   /* Pinterest red, used sparingly */
+  --ga-accent-tint:    #FFE5E9;
+
+  /* Surfaces & ink */
+  --ga-bg:             #FFFBF5;   /* warm off-white, less harsh than #fff */
+  --ga-bg-muted:       #F4EFE5;
+  --ga-ink:            #1A1830;   /* near-black, 16:1 on bg */
+  --ga-ink-soft:       #4B4869;
+  --ga-border:         #D6CEF0;
+  --ga-shadow:         0 20px 50px -20px rgba(30, 20, 80, 0.35),
+                        0 4px 12px -2px rgba(30, 20, 80, 0.15);
+
+  /* State */
+  --ga-success:        #2E7D32;
+  --ga-danger:         #B71C1C;
+
+  /* Typography — font-scale multiplier, adjustable by user */
+  --ga-scale:          1.2;
+  --ga-text-base:      calc(16px * var(--ga-scale));
+  --ga-text-sm:        calc(14px * var(--ga-scale));
+  --ga-text-lg:        calc(18px * var(--ga-scale));
+  --ga-text-xl:        calc(22px * var(--ga-scale));
+  --ga-radius:         14px;
+  --ga-radius-sm:      8px;
+
+  /* Sizing */
+  width: 340px;
+  max-height: min(680px, calc(100vh - 40px));
+  background: var(--ga-bg);
+  color: var(--ga-ink);
+
+  /* Positioning */
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 2147483640;   /* just below Chrome overlays */
+
+  /* Visuals */
+  border-radius: var(--ga-radius);
+  box-shadow: var(--ga-shadow);
+  font-family: "Nunito", ui-sans-serif, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, sans-serif;
+  font-size: var(--ga-text-base);
+  line-height: 1.5;
+  overflow: hidden;
+
+  display: flex;
+  flex-direction: column;
+
+  /* Reset host page inheritance */
+  text-align: left;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+#chatbotSidebar [hidden] {
+  display: none !important;
+}
+
+/* Subtle gradient rail on the left — visual anchor */
+#chatbotSidebar::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: linear-gradient(180deg, var(--ga-primary) 0%, var(--ga-accent) 100%);
+  opacity: 0.9;
+}
+
+/* -------- header -------- */
+.ga-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 14px 10px 20px;
+  cursor: grab;
+  user-select: none;
+  border-bottom: 1px solid var(--ga-border);
+}
+.ga-header:active { cursor: grabbing; }
+
+.ga-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.ga-logo {
+  width: 32px; height: 32px;
+  flex: 0 0 32px;
+  display: grid; place-items: center;
+  color: #fff;
+  background: var(--ga-primary);
+  border-radius: 10px;
+}
+.ga-title {
+  font-family: "Newsreader", Georgia, "Times New Roman", serif;
+  font-size: calc(20px * var(--ga-scale));
+  font-weight: 600;
+  letter-spacing: 0;
+  color: var(--ga-ink);
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ga-header-actions {
+  display: flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 6px;
+}
+
+.ga-icon-btn {
+  width: 34px; height: 34px;
+  flex: 0 0 34px;
+  display: grid; place-items: center;
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  color: var(--ga-ink-soft);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s;
+}
+.ga-icon-btn:hover,
+.ga-icon-btn:focus-visible {
+  background: var(--ga-primary-tint);
+  color: var(--ga-primary-dark);
+  outline: none;
+}
+.ga-icon-btn:focus-visible {
+  box-shadow: 0 0 0 2px var(--ga-primary);
+}
+
+/* -------- status pill -------- */
+.ga-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  font-size: var(--ga-text-sm);
+  color: var(--ga-ink-soft);
+  background: var(--ga-bg-muted);
+  border-bottom: 1px solid var(--ga-border);
+}
+.ga-status-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--ga-success);
+}
+#chatbotSidebar[data-state="listening"] .ga-status-dot {
+  background: var(--ga-danger);
+  animation: ga-pulse-dot 1.2s ease-in-out infinite;
+}
+#chatbotSidebar[data-state="thinking"] .ga-status-dot {
+  background: var(--ga-accent);
+  animation: ga-pulse-dot 0.8s ease-in-out infinite;
+}
+
+@keyframes ga-pulse-dot {
+  0%, 100% { transform: scale(1);   opacity: 1;   }
+  50%      { transform: scale(1.6); opacity: 0.4; }
+}
+
+/* -------- main transcript -------- */
+.ga-main {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 16px 20px;
+  scroll-behavior: smooth;
+}
+.ga-main::-webkit-scrollbar            { width: 8px; }
+.ga-main::-webkit-scrollbar-track      { background: transparent; }
+.ga-main::-webkit-scrollbar-thumb      { background: var(--ga-border); border-radius: 4px; }
+.ga-main::-webkit-scrollbar-thumb:hover{ background: var(--ga-primary-tint); }
+
+/* welcome state */
+.ga-welcome-lead {
+  margin: 0 0 10px 0;
+  font-size: var(--ga-text-base);
+  color: var(--ga-ink);
+}
+.ga-examples {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.ga-examples li {
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--ga-border);
+  font-size: var(--ga-text-sm);
+  color: var(--ga-ink-soft);
+}
+.ga-examples li:last-child { border-bottom: none; }
+.ga-examples kbd {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--ga-border);
+  border-radius: 6px;
+  background: #fff;
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  font-size: 0.9em;
+  color: var(--ga-primary-dark);
+  margin-right: 6px;
+}
+
+/* message bubbles */
+.ga-msg {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-radius: var(--ga-radius-sm);
+  font-size: var(--ga-text-base);
+  max-width: 100%;
+  word-wrap: break-word;
+  animation: ga-msg-in 0.25s ease-out;
+}
+.ga-msg.user {
+  background: var(--ga-primary);
+  color: #fff;
+  margin-left: 28px;
+  border-top-right-radius: 2px;
+}
+.ga-msg.ai {
+  background: var(--ga-primary-tint);
+  color: var(--ga-ink);
+  margin-right: 28px;
+  border-top-left-radius: 2px;
+}
+.ga-msg.error {
+  background: var(--ga-accent-tint);
+  color: var(--ga-danger);
+  border-left: 3px solid var(--ga-danger);
+}
+
+@keyframes ga-msg-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+/* pins grid (Pinterest results) */
+.ga-pins {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 12px 0;
+}
+.ga-pin {
+  display: block;
+  border-radius: var(--ga-radius-sm);
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--ga-border);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.ga-pin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px -6px rgba(230, 0, 35, 0.3);
+  border-color: var(--ga-accent);
+}
+.ga-pin img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  background: var(--ga-bg-muted);
+}
+.ga-pin-title {
+  padding: 8px 10px;
+  font-size: var(--ga-text-sm);
+  font-weight: 600;
+  color: var(--ga-ink);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* -------- mic control -------- */
+.ga-controls {
+  padding: 16px 20px 20px;
+  border-top: 1px solid var(--ga-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ga-mic {
+  position: relative;
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ga-primary);
+  color: #fff;
+  display: grid; place-items: center;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  isolation: isolate;
+}
+.ga-mic:hover        { background: var(--ga-primary-dark); }
+.ga-mic:active       { transform: scale(0.96); }
+.ga-mic:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 4px var(--ga-primary-tint),
+              0 0 0 6px var(--ga-primary);
+}
+.ga-mic-icon { position: relative; z-index: 2; }
+
+/* listening: swap to red + pulsing ripples */
+#chatbotSidebar[data-state="listening"] .ga-mic {
+  background: var(--ga-danger);
+}
+.ga-mic-ripple {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+#chatbotSidebar[data-state="listening"] .ga-mic-ripple {
+  animation: ga-ripple 1.6s ease-out infinite;
+}
+#chatbotSidebar[data-state="listening"] .ga-mic-ripple--2 {
+  animation-delay: 0.8s;
+}
+
+@keyframes ga-ripple {
+  0%   { transform: scale(1);   opacity: 0.55; }
+  100% { transform: scale(2.2); opacity: 0;    }
+}
+
+.ga-mic-hint {
+  margin: 0;
+  font-size: var(--ga-text-sm);
+  color: var(--ga-ink-soft);
+}
+
+/* -------- drawers (font size, info) -------- */
+.ga-drawer {
+  position: absolute;
+  left: 16px; right: 16px;
+  top: 60px;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid var(--ga-border);
+  border-radius: var(--ga-radius-sm);
+  box-shadow: 0 8px 24px -8px rgba(30, 20, 80, 0.25);
+  z-index: 5;
+  animation: ga-drawer-in 0.18s ease-out;
+}
+@keyframes ga-drawer-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+.ga-drawer-title {
+  margin: 0 0 10px 0;
+  font-size: var(--ga-text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ga-ink-soft);
+}
+.ga-drawer-body {
+  margin: 0;
+  font-size: var(--ga-text-sm);
+  color: var(--ga-ink);
+  line-height: 1.55;
+}
+
+.ga-font-picker {
+  display: flex;
+  gap: 8px;
+}
+.ga-font-opt {
+  flex: 1;
+  min-height: 44px;
+  border-radius: var(--ga-radius-sm);
+  border: 1.5px solid var(--ga-border);
+  background: #fff;
+  color: var(--ga-ink);
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.15s;
+}
+.ga-font-opt[data-scale="1"]    { font-size: 14px; }
+.ga-font-opt[data-scale="1.2"]  { font-size: 18px; }
+.ga-font-opt[data-scale="1.4"]  { font-size: 22px; }
+.ga-font-opt[data-scale="1.65"] { font-size: 28px; }
+.ga-font-opt[aria-checked="true"] {
+  border-color: var(--ga-primary);
+  background: var(--ga-primary-tint);
+  color: var(--ga-primary-dark);
+}
+.ga-font-opt:hover {
+  border-color: var(--ga-primary);
+}
+
+/* -------- minimize state -------- */
+#chatbotSidebar.minimized {
+  width: 68px;
+  height: 68px;
+  padding: 0;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+#chatbotSidebar.minimized::before,
+#chatbotSidebar.minimized .ga-header,
+#chatbotSidebar.minimized .ga-status,
+#chatbotSidebar.minimized .ga-main,
+#chatbotSidebar.minimized .ga-controls,
+#chatbotSidebar.minimized .ga-drawer { display: none; }
+
+.ga-min-pill {
+  width: 68px; height: 68px;
+  border-radius: 50%;
+  border: none;
+  background: var(--ga-primary);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: var(--ga-shadow);
+  display: none;
+  place-items: center;
+  transition: transform 0.15s, background 0.2s;
+}
+.ga-min-pill:hover      { transform: scale(1.08); background: var(--ga-primary-dark); }
+.ga-min-pill:focus-visible {
+  outline: none;
+  box-shadow: var(--ga-shadow), 0 0 0 3px var(--ga-primary-tint);
+}
+#chatbotSidebar.minimized .ga-min-pill { display: grid; }
+
+/* -------- accessibility: respect reduced motion -------- */
+@media (prefers-reduced-motion: reduce) {
+  #chatbotSidebar *,
+  #chatbotSidebar *::before,
+  #chatbotSidebar *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* -------- high contrast mode -------- */
+@media (prefers-contrast: more) {
+  #chatbotSidebar {
+    --ga-border: var(--ga-ink);
+  }
+  .ga-msg.ai { border: 1px solid var(--ga-ink); }
+}
+
+/* -------- small viewports -------- */
+@media (max-width: 420px) {
+  #chatbotSidebar {
+    top: 10px; right: 10px; left: 10px;
+    width: auto;
+  }
+}

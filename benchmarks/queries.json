@@ -1,0 +1,409 @@
+{
+  "_meta": {
+    "description": "Evaluation dataset for GrandAssist intent routing. Each entry has a realistic senior-phrased voice command and the intent we expect the local router to classify it as. 'chat' means the LLM must handle it.",
+    "version": "1.0",
+    "total": 100
+  },
+  "queries": [
+    {
+      "input": "open youtube",
+      "expected": "open_website"
+    },
+    {
+      "input": "open Google please",
+      "expected": "open_website"
+    },
+    {
+      "input": "launch gmail",
+      "expected": "open_website"
+    },
+    {
+      "input": "go to facebook",
+      "expected": "open_website"
+    },
+    {
+      "input": "take me to amazon",
+      "expected": "open_website"
+    },
+    {
+      "input": "open wikipedia",
+      "expected": "open_website"
+    },
+    {
+      "input": "launch yahoo",
+      "expected": "open_website"
+    },
+    {
+      "input": "open bing",
+      "expected": "open_website"
+    },
+    {
+      "input": "go to ebay",
+      "expected": "open_website"
+    },
+    {
+      "input": "open duck duck go",
+      "expected": "open_website"
+    },
+    {
+      "input": "take me to hotmail",
+      "expected": "open_website"
+    },
+    {
+      "input": "open outlook",
+      "expected": "open_website"
+    },
+    {
+      "input": "launch pinterest",
+      "expected": "open_website"
+    },
+    {
+      "input": "open you tube",
+      "expected": "open_website"
+    },
+    {
+      "input": "go to the google website",
+      "expected": "open_website"
+    },
+    {
+      "input": "open youtube please",
+      "expected": "open_website"
+    },
+    {
+      "input": "launch the gmail page",
+      "expected": "open_website"
+    },
+    {
+      "input": "open amazon dot ca",
+      "expected": "open_website"
+    },
+    {
+      "input": "go to wikipedia",
+      "expected": "open_website"
+    },
+    {
+      "input": "open facebook now",
+      "expected": "open_website"
+    },
+    {
+      "input": "show me my knitting pins",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "show me my recipe pins",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "find my soup recipes",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "show me my saved gardening ideas",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "my pins of Christmas decorations",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "find my crochet patterns",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "show me my dessert recipes",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "my saved quilting ideas",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "find my pasta recipes",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "show me my birthday cake pins",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "my pins of flower arrangements",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "find my garden vegetable tips",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "show me my cookie recipes",
+      "expected": "search_my_pins"
+    },
+    {
+      "input": "search for cookie recipes",
+      "expected": "search_refusal"
+    },
+    {
+      "input": "google the weather",
+      "expected": "search_refusal"
+    },
+    {
+      "input": "search the web for flu symptoms",
+      "expected": "search_refusal"
+    },
+    {
+      "input": "what year did the second world war end",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I change my password",
+      "expected": "chat"
+    },
+    {
+      "input": "what is inflation",
+      "expected": "chat"
+    },
+    {
+      "input": "tell me a joke",
+      "expected": "chat"
+    },
+    {
+      "input": "what's the capital of France",
+      "expected": "chat"
+    },
+    {
+      "input": "how to make chicken soup",
+      "expected": "chat"
+    },
+    {
+      "input": "what is a VPN",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I zoom in on a webpage",
+      "expected": "chat"
+    },
+    {
+      "input": "what is the difference between ram and storage",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I print from my computer",
+      "expected": "chat"
+    },
+    {
+      "input": "is my computer safe from viruses",
+      "expected": "chat"
+    },
+    {
+      "input": "what should I do if I get a scam email",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I set up two factor authentication",
+      "expected": "chat"
+    },
+    {
+      "input": "explain what a browser is",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I video call my grandkids",
+      "expected": "chat"
+    },
+    {
+      "input": "what does VPN stand for",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I back up my photos",
+      "expected": "chat"
+    },
+    {
+      "input": "what is a cookie in a browser",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I update my operating system",
+      "expected": "chat"
+    },
+    {
+      "input": "what's the difference between wifi and internet",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I make text larger",
+      "expected": "chat"
+    },
+    {
+      "input": "what is two factor authentication",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I connect a printer wirelessly",
+      "expected": "chat"
+    },
+    {
+      "input": "what's a good password manager",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I clear my browser history",
+      "expected": "chat"
+    },
+    {
+      "input": "how to upload a photo to facebook",
+      "expected": "chat"
+    },
+    {
+      "input": "tell me how to use google maps",
+      "expected": "chat"
+    },
+    {
+      "input": "what is https",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I recover a deleted email",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I pin a tab in chrome",
+      "expected": "chat"
+    },
+    {
+      "input": "tell me how to make sourdough bread",
+      "expected": "chat"
+    },
+    {
+      "input": "what time zone is Toronto in",
+      "expected": "chat"
+    },
+    {
+      "input": "who was the first prime minister of Canada",
+      "expected": "chat"
+    },
+    {
+      "input": "what's a good remedy for a sore throat",
+      "expected": "chat"
+    },
+    {
+      "input": "how many cups are in a liter",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I pay a bill online",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I install an app",
+      "expected": "chat"
+    },
+    {
+      "input": "what's the best web browser",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I check my bank account online",
+      "expected": "chat"
+    },
+    {
+      "input": "what does the cloud mean",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I change my screen brightness",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I order groceries online",
+      "expected": "chat"
+    },
+    {
+      "input": "what does refurbished mean",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I book a doctor appointment online",
+      "expected": "chat"
+    },
+    {
+      "input": "explain cryptocurrency simply",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I sync my calendar",
+      "expected": "chat"
+    },
+    {
+      "input": "what's the weather tomorrow",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I turn off autoplay on youtube",
+      "expected": "chat"
+    },
+    {
+      "input": "how to quit a frozen program",
+      "expected": "chat"
+    },
+    {
+      "input": "what is a firewall",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I renew my driver's license online",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I make a group chat",
+      "expected": "chat"
+    },
+    {
+      "input": "what's a good exercise for seniors",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I save a webpage as a bookmark",
+      "expected": "chat"
+    },
+    {
+      "input": "can you read this article to me",
+      "expected": "chat"
+    },
+    {
+      "input": "what is chatgpt",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I switch between tabs",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I translate a page",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I subscribe to a newsletter",
+      "expected": "chat"
+    },
+    {
+      "input": "what's a good book to read",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I change my font size",
+      "expected": "chat"
+    },
+    {
+      "input": "what is two step verification",
+      "expected": "chat"
+    },
+    {
+      "input": "explain phishing to me",
+      "expected": "chat"
+    },
+    {
+      "input": "how do I open a pdf file",
+      "expected": "chat"
+    }
+  ]
+}
