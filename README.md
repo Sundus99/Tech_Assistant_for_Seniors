@@ -5,7 +5,7 @@
 
 [![CI](https://github.com/ksenera/Tech_Assistant_for_Seniors/actions/workflows/ci.yml/badge.svg)](https://github.com/ksenera/Tech_Assistant_for_Seniors/actions/workflows/ci.yml)
 ![Coverage](https://img.shields.io/badge/coverage-94%25-brightgreen)
-![Tests](https://img.shields.io/badge/tests-75%20passing%2C%205%20skipped-brightgreen)
+![Tests](https://img.shields.io/badge/backend-75%20passing-brightgreen)
 ![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
 ![Manifest](https://img.shields.io/badge/chrome-manifest%20v3-blue)
 
@@ -22,8 +22,9 @@ Results from the 100-query benchmark in `benchmarks/queries.json` (run `python -
 | Intent classification accuracy         | **100%** on 100 senior-phrased queries  |
 | Queries resolved without an LLM call   | **36%** (deflection rate)               |
 | Projected OpenAI savings at 5k q/day   | **~$4.20 / month** (~36% call reduction)|
-| CI-style local test run                | **75 passed, 5 skipped**                |
+| Backend test run                       | **75 passed**                           |
 | Unit test coverage                     | **94.02%**                              |
+| Browser smoke tests                    | Selenium Chrome job in GitHub Actions   |
 | LLM providers                          | mock, Gemini, OpenAI, Ollama            |
 
 Why this matters: every query handled by the local router avoids an unnecessary LLM call. Knowledge questions ("what is inflation") still use the configured LLM provider. That is the right tradeoff.
@@ -201,7 +202,7 @@ Scopes required: `pins:read`, `boards:read`, `user_accounts:read`. Users authori
 │   ├── scripts/{background,content}.js
 │   ├── sidebar/{sidebar.html,sidebar.css}
 │   └── images/icon-{16,48,128}.png
-├── tests/                        # 75 passing tests, 5 Selenium smoke tests skipped in CI-style runs
+├── tests/                        # 75 backend tests plus Selenium Chrome smoke tests
 ├── benchmarks/                   # evaluation harness + ground-truth queries
 └── .github/workflows/ci.yml      # runs tests + benchmark + manifest validation
 ```
@@ -216,7 +217,7 @@ Scopes required: `pins:read`, `boards:read`, `user_accounts:read`. Users authori
 - **Added SQLite request metrics**: `/metrics` endpoint with cost tracking
 - **Added Pinterest API v5** integration (OAuth + pin search)
 - **Redesigned sidebar**: WCAG AA compliant, font scaling, minimize, drag
-- **Added test suite**: 75 passing tests, 5 skipped Selenium smoke tests, 94% coverage, CI-gated at 80%
+- **Added test suite**: 75 backend tests, Selenium Chrome smoke tests, 94% coverage, CI-gated at 80%
 - **Added benchmark harness**: 100-query evaluation with expected-intent accuracy and local-routing rate
 - **Manifest v3 hardening**: explicit host permissions, service worker cleanup
 
