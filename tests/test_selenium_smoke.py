@@ -2,8 +2,7 @@
 End-to-end smoke tests for the Chrome extension.
 
 These tests require a real Chrome binary and the ``selenium`` package. They
-are skipped automatically in CI where we run headless without a display —
-run them locally with:
+run in GitHub Actions under xvfb and can also run locally with:
 
     pip install selenium
     pytest tests/test_selenium_smoke.py -v --no-cov
@@ -37,13 +36,16 @@ from selenium.webdriver.support.ui import WebDriverWait  # noqa: E402
 
 
 EXTENSION_DIR = Path(__file__).resolve().parents[1] / "extension"
-SKIP_REASON = "Chrome not available or CI lacks display"
+SKIP_REASON = "Chrome not available"
 
 
 def _chrome_available() -> bool:
-    """Extensions require a real Chrome binary — headless-shell is not enough."""
-    if os.getenv("CI"):
+    """Extensions require a real Chrome binary; headless-shell is not enough."""
+    if os.getenv("GRANDASSIST_SKIP_SELENIUM"):
         return False
+    chrome_path = os.getenv("CHROME_PATH")
+    if chrome_path and Path(chrome_path).exists():
+        return True
     mac_chrome = Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
     return mac_chrome.exists() or any(shutil.which(name) for name in
                                       ("google-chrome", "chromium",
@@ -87,6 +89,9 @@ def local_page(tmp_path):
 @pytest.fixture
 def driver():
     opts = Options()
+    chrome_path = os.getenv("CHROME_PATH")
+    if chrome_path:
+        opts.binary_location = chrome_path
     opts.add_argument(f"--load-extension={EXTENSION_DIR}")
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
