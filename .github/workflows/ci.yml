@@ -87,6 +87,15 @@ jobs:
         run: xvfb-run -a python -m pytest tests/test_selenium_smoke.py -v --no-cov
         env:
           CHROME_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
+          SELENIUM_ARTIFACT_DIR: artifacts/selenium
+
+      - name: Upload Selenium diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: selenium-diagnostics
+          path: artifacts/selenium
+          if-no-files-found: ignore
 
   lint:
     name: Lint extension
