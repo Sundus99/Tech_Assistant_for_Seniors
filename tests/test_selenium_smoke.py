@@ -20,6 +20,7 @@ from __future__ import annotations
 import os
 import shutil
 import socket
+import subprocess
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -36,7 +37,64 @@ from selenium.webdriver.support.ui import WebDriverWait  # noqa: E402
 
 
 EXTENSION_DIR = Path(__file__).resolve().parents[1] / "extension"
+ARTIFACT_DIR = Path(os.getenv("SELENIUM_ARTIFACT_DIR", "artifacts/selenium"))
 SKIP_REASON = "Chrome not available"
+
+
+def _command_version(command: str) -> str:
+    path = shutil.which(command)
+    if not path:
+        return "not found"
+    try:
+        completed = subprocess.run(
+            [path, "--version"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+    except Exception as exc:  # noqa: BLE001 - diagnostics should not fail tests
+        return f"{path}: {type(exc).__name__}: {exc}"
+    return (completed.stdout or completed.stderr or path).strip()
+
+
+def _selenium_environment() -> dict[str, str]:
+    chrome_path = os.getenv("CHROME_PATH") or str(
+        Path("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+    )
+    return {
+        "CHROME_PATH": chrome_path,
+        "chrome": _command_version(chrome_path) if Path(chrome_path).exists() else "not found",
+        "chromedriver": _command_version("chromedriver"),
+    }
+
+
+def _write_diagnostics(driver, test_name: str) -> None:
+    ARTIFACT_DIR.mkdir(parents=True, exist_ok=True)
+    safe_name = test_name.replace("/", "_").replace(":", "_")
+    (ARTIFACT_DIR / f"{safe_name}.env.txt").write_text(
+        "\n".join(f"{k}={v}" for k, v in _selenium_environment().items()),
+        encoding="utf-8",
+    )
+    try:
+        driver.save_screenshot(str(ARTIFACT_DIR / f"{safe_name}.png"))
+    except Exception as exc:  # noqa: BLE001
+        (ARTIFACT_DIR / f"{safe_name}.screenshot_error.txt").write_text(str(exc))
+    try:
+        logs = driver.get_log("browser")
+    except Exception as exc:  # noqa: BLE001
+        logs = [{"level": "ERROR", "message": str(exc)}]
+    (ARTIFACT_DIR / f"{safe_name}.browser.log").write_text(
+        "\n".join(str(entry) for entry in logs),
+        encoding="utf-8",
+    )
+
+
+@pytest.hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+    setattr(item, f"rep_{report.when}", report)
 
 
 def _chrome_available() -> bool:
@@ -87,7 +145,7 @@ def local_page(tmp_path):
 
 
 @pytest.fixture
-def driver():
+def driver(request):
     opts = Options()
     chrome_path = os.getenv("CHROME_PATH")
     if chrome_path:
@@ -96,10 +154,19 @@ def driver():
     opts.add_argument("--no-sandbox")
     opts.add_argument("--disable-dev-shm-usage")
     opts.add_argument("--window-size=1280,800")
-    drv = webdriver.Chrome(options=opts)
+    try:
+        drv = webdriver.Chrome(options=opts)
+    except Exception as exc:  # noqa: BLE001
+        env = _selenium_environment()
+        pytest.fail(
+            "Unable to start Chrome WebDriver. "
+            f"Diagnostics: {env}. Original error: {type(exc).__name__}: {exc}"
+        )
     try:
         yield drv
     finally:
+        if getattr(request.node, "rep_call", None) and request.node.rep_call.failed:
+            _write_diagnostics(drv, request.node.nodeid)
         drv.quit()
 
 

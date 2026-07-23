@@ -72,9 +72,50 @@ class TestRecordAndSummary:
     def test_error_count_tracked(self, metrics_store: MetricsStore) -> None:
         metrics_store.record(RequestRecord(
             ts=time.time(), user_input="x", intent="chat",
-            handled_locally=False, latency_ms=1.0,
+            handled_locally=False, latency_ms=1.0, outcome="error",
             error="RuntimeError: boom"))
         assert metrics_store.summary()["error_count"] == 1
+
+    def test_outcome_breakdown(self, metrics_store: MetricsStore) -> None:
+        metrics_store.record(RequestRecord(
+            ts=time.time(), user_input="open youtube", intent="open_website",
+            handled_locally=True, latency_ms=1.0, outcome="success"))
+        metrics_store.record(RequestRecord(
+            ts=time.time(), user_input="show me my pins", intent="search_my_pins",
+            handled_locally=True, latency_ms=1.0, outcome="auth_required"))
+        metrics_store.record(RequestRecord(
+            ts=time.time(), user_input="what is x", intent="chat",
+            handled_locally=False, latency_ms=1.0, outcome="error",
+            error="RuntimeError: boom"))
+
+        assert metrics_store.summary()["per_outcome"] == {
+            "success": 1,
+            "auth_required": 1,
+            "error": 1,
+        }
+
+    def test_provider_and_response_type_breakdowns(self,
+                                                   metrics_store: MetricsStore) -> None:
+        metrics_store.record(RequestRecord(
+            ts=time.time(), user_input="open youtube", intent="open_website",
+            handled_locally=True, latency_ms=1.0, provider="local",
+            response_type="open web page"))
+        metrics_store.record(RequestRecord(
+            ts=time.time(), user_input="what is x", intent="chat",
+            handled_locally=False, latency_ms=1.0, provider="mock",
+            response_type="chat"))
+        metrics_store.record(RequestRecord(
+            ts=time.time(), user_input="show me my pins", intent="search_my_pins",
+            handled_locally=True, latency_ms=1.0, provider="pinterest",
+            response_type="pins"))
+
+        summary = metrics_store.summary()
+        assert summary["per_provider"] == {"local": 1, "mock": 1, "pinterest": 1}
+        assert summary["per_response_type"] == {
+            "open web page": 1,
+            "chat": 1,
+            "pins": 1,
+        }
 
 
 class TestCostEstimation:

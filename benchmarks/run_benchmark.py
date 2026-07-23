@@ -131,6 +131,40 @@ def run(queries: list[dict]) -> dict:
     }
 
 
+
+def render_markdown(report: dict) -> str:
+    """Return a compact Markdown report for CI artifacts and README snippets."""
+    lines = [
+        "# GrandAssist Intent Router Benchmark",
+        "",
+        "| Metric | Value |",
+        "| --- | ---: |",
+        f"| Queries evaluated | {report['total_queries']} |",
+        f"| Overall accuracy | {report['accuracy'] * 100:.1f}% |",
+        f"| Routed locally | {report['predicted_local_rate'] * 100:.1f}% |",
+        f"| Ground-truth local | {report['ground_truth_local_rate'] * 100:.1f}% |",
+        f"| p95 latency | {report['latency_us']['p95']} us |",
+        "",
+        "## Per-Intent Results",
+        "",
+        "| Intent | Correct | Accuracy |",
+        "| --- | ---: | ---: |",
+    ]
+    for intent, stats in report["per_intent_accuracy"].items():
+        correct = round(stats["accuracy"] * stats["n"])
+        lines.append(f"| {intent} | {correct}/{stats['n']} | {stats['accuracy'] * 100:.1f}% |")
+
+    lines.extend(["", "## Misclassifications", ""])
+    if report["misclassifications"]:
+        for miss in report["misclassifications"]:
+            lines.append(
+                f"- `{miss['input']}` expected `{miss['expected']}`, got `{miss['got']}`"
+            )
+    else:
+        lines.append("None.")
+    lines.append("")
+    return "\n".join(lines)
+
 def pretty_print(report: dict) -> None:
     print("=" * 68)
     print("  GrandAssist Intent Router Benchmark")
@@ -168,6 +202,7 @@ def main() -> int:
     parser.add_argument("--queries", type=Path,
                         default=Path(__file__).parent / "queries.json")
     parser.add_argument("--json", type=Path, help="Write full report to this file")
+    parser.add_argument("--markdown", type=Path, help="Write Markdown report to this file")
     args = parser.parse_args()
 
     queries = load_queries(args.queries)
@@ -177,6 +212,10 @@ def main() -> int:
     if args.json:
         args.json.write_text(json.dumps(report, indent=2))
         print(f"\n  Full report written to {args.json}")
+
+    if args.markdown:
+        args.markdown.write_text(render_markdown(report))
+        print(f"\n  Markdown report written to {args.markdown}")
 
     return 0 if report["accuracy"] >= 0.8 else 1
 

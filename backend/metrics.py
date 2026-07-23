@@ -37,6 +37,9 @@ class RequestRecord:
     intent: str
     handled_locally: bool
     latency_ms: float
+    outcome: str = "success"
+    provider: str = "local"
+    response_type: str = "chat"
     prompt_tokens: int = 0
     completion_tokens: int = 0
     estimated_cost_usd: float = 0.0
@@ -62,6 +65,9 @@ class MetricsStore:
                     intent           TEXT    NOT NULL,
                     handled_locally  INTEGER NOT NULL,
                     latency_ms       REAL    NOT NULL,
+                    outcome          TEXT    NOT NULL DEFAULT 'success',
+                    provider         TEXT    NOT NULL DEFAULT 'local',
+                    response_type    TEXT    NOT NULL DEFAULT 'chat',
                     prompt_tokens    INTEGER NOT NULL DEFAULT 0,
                     completion_tokens INTEGER NOT NULL DEFAULT 0,
                     estimated_cost_usd REAL  NOT NULL DEFAULT 0.0,
@@ -69,8 +75,22 @@ class MetricsStore:
                 )
                 """
             )
+            existing_cols = {
+                row["name"] for row in conn.execute("PRAGMA table_info(requests)")
+            }
+            migrations = (
+                ("outcome", "ALTER TABLE requests ADD COLUMN outcome TEXT NOT NULL DEFAULT 'success'"),
+                ("provider", "ALTER TABLE requests ADD COLUMN provider TEXT NOT NULL DEFAULT 'local'"),
+                ("response_type", "ALTER TABLE requests ADD COLUMN response_type TEXT NOT NULL DEFAULT 'chat'"),
+            )
+            for name, ddl in migrations:
+                if name not in existing_cols:
+                    conn.execute(ddl)
             conn.execute("CREATE INDEX IF NOT EXISTS idx_ts ON requests(ts)")
             conn.execute("CREATE INDEX IF NOT EXISTS idx_intent ON requests(intent)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_outcome ON requests(outcome)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_provider ON requests(provider)")
+            conn.execute("CREATE INDEX IF NOT EXISTS idx_response_type ON requests(response_type)")
 
     @contextmanager
     def _connect(self) -> Iterator[sqlite3.Connection]:
@@ -91,10 +111,12 @@ class MetricsStore:
                 """
                 INSERT INTO requests (
                     ts, user_input, intent, handled_locally, latency_ms,
-                    prompt_tokens, completion_tokens, estimated_cost_usd, error
+                    outcome, provider, response_type, prompt_tokens,
+                    completion_tokens, estimated_cost_usd, error
                 ) VALUES (
                     :ts, :user_input, :intent, :handled_locally, :latency_ms,
-                    :prompt_tokens, :completion_tokens, :estimated_cost_usd, :error
+                    :outcome, :provider, :response_type, :prompt_tokens,
+                    :completion_tokens, :estimated_cost_usd, :error
                 )
                 """,
                 data,
@@ -122,6 +144,15 @@ class MetricsStore:
             intents = conn.execute(
                 "SELECT intent, COUNT(*) AS n FROM requests GROUP BY intent ORDER BY n DESC"
             ).fetchall()
+            outcomes = conn.execute(
+                "SELECT outcome, COUNT(*) AS n FROM requests GROUP BY outcome ORDER BY n DESC"
+            ).fetchall()
+            providers = conn.execute(
+                "SELECT provider, COUNT(*) AS n FROM requests GROUP BY provider ORDER BY n DESC"
+            ).fetchall()
+            response_types = conn.execute(
+                "SELECT response_type, COUNT(*) AS n FROM requests GROUP BY response_type ORDER BY n DESC"
+            ).fetchall()
 
             # p95 latency (use Python since SQLite lacks percentile_cont)
             latencies = [r[0] for r in conn.execute(
@@ -143,6 +174,9 @@ class MetricsStore:
             "total_cost_usd": round(row["total_cost_usd"] or 0.0, 4),
             "error_count": row["error_count"] or 0,
             "per_intent": {r["intent"]: r["n"] for r in intents},
+            "per_outcome": {r["outcome"]: r["n"] for r in outcomes},
+            "per_provider": {r["provider"]: r["n"] for r in providers},
+            "per_response_type": {r["response_type"]: r["n"] for r in response_types},
         }
 
 

@@ -240,6 +240,8 @@ async def chat_endpoint(user_request: UserRequest) -> ChatResponse:
 
         prompt_tok = completion_tok = 0
         error: str | None = None
+        outcome = "success"
+        provider = "local"
         pins_payload: list[dict[str, Any]] | None = None
         pinterest_auth: str | None = None
 
@@ -257,6 +259,7 @@ async def chat_endpoint(user_request: UserRequest) -> ChatResponse:
                     state = secrets.token_urlsafe(16)
                     _oauth_states[state] = time.time()
                     pinterest_auth = pinterest.authorization_url(state)
+                    outcome = "auth_required"
                     resp = ChatResponse(
                         AI="To search your pins, please connect your "
                            "Pinterest account first.",
@@ -264,6 +267,7 @@ async def chat_endpoint(user_request: UserRequest) -> ChatResponse:
                         pinterest_auth_url=pinterest_auth,
                     )
                 else:
+                    provider = "pinterest"
                     pins = await pinterest.search_my_pins(
                         token, routed.query or "", page_size=8
                     )
@@ -272,6 +276,7 @@ async def chat_endpoint(user_request: UserRequest) -> ChatResponse:
                         AI=routed.reply, type="pins", pins=pins_payload
                     )
             else:  # CHAT fallback -> LLM
+                provider = LLM_PROVIDER
                 reply, prompt_tok, completion_tok = _llm_reply(
                     user_request.user_input
                 )
@@ -280,6 +285,7 @@ async def chat_endpoint(user_request: UserRequest) -> ChatResponse:
             raise
         except Exception as exc:  # noqa: BLE001 — broad-catch for metrics logging
             error = f"{type(exc).__name__}: {exc}"
+            outcome = "error"
             resp = ChatResponse(
                 AI="Sorry, something went wrong. Please try again.",
                 type="error",
@@ -291,6 +297,9 @@ async def chat_endpoint(user_request: UserRequest) -> ChatResponse:
         intent=routed.intent.value,
         handled_locally=routed.handled_locally,
         latency_ms=elapsed[0],
+        outcome=outcome,
+        provider=provider,
+        response_type=resp.type,
         prompt_tokens=prompt_tok,
         completion_tokens=completion_tok,
         estimated_cost_usd=estimate_cost_usd(prompt_tok, completion_tok),
